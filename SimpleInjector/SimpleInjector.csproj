@@ -48,10 +48,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IOrder.cs" />
+    <Compile Include="IShoppingCart.cs" />
+    <Compile Include="IShoppingCartFactory.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="PurchaseOrder.cs" />
+    <Compile Include="Repository\CustomerOrderRepository.cs" />
+    <Compile Include="Repository\CustomerRepository.cs" />
+    <Compile Include="Repository\Entity\Customer.cs" />
+    <Compile Include="Repository\Entity\CustomerOrder.cs" />
+    <Compile Include="Repository\Entity\EntityBase.cs" />
+    <Compile Include="Repository\IRepository.cs" />
+    <Compile Include="Repository\IRepositoryFactory.cs" />
+    <Compile Include="Repository\RepositoryFactory.cs" />
+    <Compile Include="ShoppingCart2.cs" />
     <Compile Include="ShoppingCart.cs" />
+    <Compile Include="ShoppingCartFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

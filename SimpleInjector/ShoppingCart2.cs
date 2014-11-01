@@ -6,13 +6,11 @@ using System.Threading.Tasks;
 
 namespace SimpleInjector
 {
-    public class ShoppingCart : IShoppingCart
+    public class ShoppingCart2 : IShoppingCart
     {
-        private readonly IOrder _order;
+        private readonly Func<IOrder> _order;
 
-        public IShoppingCart ChildShoppingCart { get; set; }
-
-        public ShoppingCart(IOrder order)
+        public ShoppingCart2(Func<IOrder> order)
         {
             _order = order;
         }
@@ -20,7 +18,7 @@ namespace SimpleInjector
         public void CheckOut()
         {
             Console.WriteLine(this.GetType().Name + " gets checked out ...");
-            _order.Process();
+            _order().Process();
         }
     }
 }
