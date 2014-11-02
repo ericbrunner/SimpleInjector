@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using SimpleInjector.Repository.Entity;
+using SimpleInjector.Repository.Interfaces;
 
 namespace SimpleInjector.Repository
 {

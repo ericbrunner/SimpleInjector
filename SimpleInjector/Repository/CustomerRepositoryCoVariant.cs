@@ -8,11 +8,11 @@ using System.Threading.Tasks;
 
 namespace SimpleInjector.Repository
 {
-    class CustomerOrderRepository : IRepository<CustomerOrder>
+    class CustomerRepositoryCoVariant : IRepositoryCoVariance<CustomerRepository>
     {
-        public void Create(CustomerOrder entity)
+        public CustomerRepository GetRepository()
         {
-            Console.WriteLine("customer-order created.");
+            return new CustomerRepository();
         }
     }
 }

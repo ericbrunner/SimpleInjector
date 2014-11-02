@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SimpleInjector.Repository
+namespace SimpleInjector.Repository.Interfaces
 {
     interface IRepositoryFactory
     {
