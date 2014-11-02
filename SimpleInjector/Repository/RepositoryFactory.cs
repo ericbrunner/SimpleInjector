@@ -1,36 +1,28 @@
-﻿using System;
+﻿using SimpleInjector.Repository.Base;
+using SimpleInjector.Repository.Entity;
+using SimpleInjector.Repository.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using SimpleInjector.Repository.Entity;
-using SimpleInjector.Repository.Interfaces;
 
 namespace SimpleInjector.Repository
 {
     public class RepositoryFactory : IRepositoryFactory
     {
-        private readonly Func<IRepository<Customer>> customerFunc;
-        private readonly Func<IRepository<CustomerOrder>> custOrderFunc;
-
-        public RepositoryFactory(
-            Func<IRepository<Customer>> custFunc,
-            Func<IRepository<CustomerOrder>> custOrderFunc)
+        private readonly Func<Dictionary<Type, RepositoryBase>> RepoDict2Func;
+        private readonly Dictionary<Type, RepositoryBase> RepoDict2;
+        public RepositoryFactory(Func<Dictionary<Type, RepositoryBase>> repoDict2Func)
         {
-            this.customerFunc = custFunc;
-            this.custOrderFunc = custOrderFunc;
+            this.RepoDict2Func = repoDict2Func;
+            this.RepoDict2 = this.RepoDict2Func();
         }
 
-        public IRepository<T> CreateNew<T>()
+
+        public IRepository<TEntity> CreateNew<TEntity>() 
         {
-            if (typeof(T) == typeof(Customer))
-                return (IRepository<T>)customerFunc();
-
-            if (typeof(T) == typeof(CustomerOrder))
-                return (IRepository<T>)custOrderFunc();
-
-            return null;
+            return (IRepository<TEntity>)this.RepoDict2[typeof(TEntity)];
         }
-
     }
 }

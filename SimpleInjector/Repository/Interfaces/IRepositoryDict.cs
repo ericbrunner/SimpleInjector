@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace SimpleInjector.Repository.Interfaces
 {
-    public interface IRepositoryCoVariance<out T>
+    public interface IRepositoryDict
     {
-        T GetRepository();
     }
 }

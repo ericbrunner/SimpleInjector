@@ -1,4 +1,5 @@
-﻿using SimpleInjector.Repository.Entity;
+﻿using SimpleInjector.Repository.Base;
+using SimpleInjector.Repository.Entity;
 using SimpleInjector.Repository.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -8,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace SimpleInjector.Repository
 {
-    class CustomerOrderRepository : IRepository<CustomerOrder>
+    class CustomerOrderRepository : RepositoryBase, IRepository<CustomerOrder>
     {
         public void Create(CustomerOrder entity)
         {

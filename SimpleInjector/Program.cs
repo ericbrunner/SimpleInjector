@@ -2,6 +2,7 @@
 using SimpleInjector.Repository.Base;
 using SimpleInjector.Repository.Entity;
 using SimpleInjector.Repository.Interfaces;
+using SimpleInjector.Repository.RepositoryDict;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,25 +39,20 @@ namespace SimpleInjector
             // Uncomment to see that Properties are not injected by default. 
             //Console.WriteLine("shoppingChart.ChildShoppingCart not injected = {0}", shoppingChart.ChildShoppingCart == null);
 
+            Console.WriteLine("\nUse Repository Factory for verious generic Repository Types:\n");
 
             // Use a RepositoryFactory
             var repoFactory = container.GetInstance<IRepositoryFactory>();
+            var repoCustomer = repoFactory.CreateNew<Customer>();
+
+            Customer customer = new Customer(); 
+            repoCustomer.Create(customer);
+
+            var repoCustomerOrder = repoFactory.CreateNew<CustomerOrder>();
+
+            CustomerOrder customerOrder = new CustomerOrder();
+            repoCustomerOrder.Create(customerOrder);
             
-            Customer cust = new Customer();
-            var custrepo = repoFactory.CreateNew<Customer>();
-            custrepo.Create(cust);
-
-            CustomerOrder custOrder = new CustomerOrder();
-            var custOrderRepo = repoFactory.CreateNew<CustomerOrder>();
-            custOrderRepo.Create(custOrder);
-
-            // Use a RepositoryCovariantFactory
-            var repoCoVariantFactory = container.GetInstance<IRepositoryCoVarianceFactory>();
-
-            RepositoryBase repo = repoCoVariantFactory.CreateNew("customer_repo").GetRepository();
-            CustomerRepository custRepository = repo as CustomerRepository;
-            custRepository.Create(cust);
-
             Console.ReadLine();
         }
 
@@ -70,6 +66,8 @@ namespace SimpleInjector
 
             // Register a  Func<IOrder>
             container.Register<Func<IOrder>>(() => () => new PurchaseOrder());
+            
+            // Register all ShoppingCarts
             container.RegisterAll<IShoppingCart>();
 
             // Register a ShoppingCart Factory
@@ -79,23 +77,16 @@ namespace SimpleInjector
                 {"public", () => container.GetInstance<ShoppingCart2>()}
             });
 
-            // Register a CustomerRepository and CustomerOrderRepository Func
-            container.Register<Func<IRepository<Customer>>>(() => () => new CustomerRepository());
-            container.Register<Func<IRepository<CustomerOrder>>>(() => () => new CustomerOrderRepository());
-            
-            // Register a RepositoryFactory (uses the above Func)
-            container.Register<IRepositoryFactory, RepositoryFactory>();
-
+            // Register all RepositoryDictionaries
+            container.RegisterAll<IRepositoryDict>();
 
             // Register a Dictionary Func
-            container.Register<Func<Dictionary<string, IRepositoryCoVariance<RepositoryBase>>>>(() =>
-                () => new Dictionary<string, IRepositoryCoVariance<RepositoryBase>>{
-                    {"customer_repo", new CustomerRepositoryCoVariant()}
-                });
+            container.Register<Func<Dictionary<Type, RepositoryBase>>>(() =>
+                () => container.GetInstance<RepositoryDictionary>()
+                );
 
             // Register a RepositoryCovariantFactory
-            container.Register<IRepositoryCoVarianceFactory, RepositoryCoVariantFactory>();
-            
+            container.Register<IRepositoryFactory, RepositoryFactory>();
 
             // Verify Container Configuration
             container.Verify();
