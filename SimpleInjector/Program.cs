@@ -4,8 +4,10 @@ using SimpleInjector.Repository.Entity;
 using SimpleInjector.Repository.Interfaces;
 using SimpleInjector.Repository.RepositoryDict;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Emit;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,12 +23,16 @@ namespace SimpleInjector
             // Usage of registered TServices and there implementations TImplementation
 
             // uses IOrder registration
-            var shoppingChart = container.GetInstance<ShoppingCart>();
-            shoppingChart.CheckOut();
+
+            var shoppingCharts = container.GetAllInstances<IShoppingCart>().ToList();
+            IShoppingCart shoppingChart =
+                shoppingCharts.FirstOrDefault(instance => instance.GetType() == typeof(ShoppingCart));
+            shoppingChart?.CheckOut();
 
             // uses Func<IOrder> registration
-            var shoppingChart2 = container.GetInstance<ShoppingCart2>();
-            shoppingChart2.CheckOut();
+            IShoppingCart shoppingChart2 =
+                shoppingCharts.FirstOrDefault(instance => instance.GetType() == typeof(ShoppingCart2));
+            shoppingChart2?.CheckOut();
 
             // uses IShoppingCartFactory registration
             var shoppingCartFactory = container.GetInstance<IShoppingCartFactory>();
@@ -45,14 +51,14 @@ namespace SimpleInjector
             var repoFactory = container.GetInstance<IRepositoryFactory>();
             var repoCustomer = repoFactory.CreateNew<Customer>();
 
-            Customer customer = new Customer(); 
+            Customer customer = new Customer();
             repoCustomer.Create(customer);
 
             var repoCustomerOrder = repoFactory.CreateNew<CustomerOrder>();
 
             CustomerOrder customerOrder = new CustomerOrder();
             repoCustomerOrder.Create(customerOrder);
-            
+
             Console.ReadLine();
         }
 
@@ -66,19 +72,19 @@ namespace SimpleInjector
 
             // Register a  Func<IOrder>
             container.Register<Func<IOrder>>(() => () => new PurchaseOrder());
-            
+
             // Register all ShoppingCarts
-            container.RegisterAll<IShoppingCart>();
+            container.RegisterAll<IShoppingCart>(typeof(ShoppingCart), typeof(ShoppingCart2));
 
             // Register a ShoppingCart Factory
             container.Register<IShoppingCartFactory>(() => new ShoppingCartFactory
             {
-                {"private", () => container.GetInstance<ShoppingCart>()},
-                {"public", () => container.GetInstance<ShoppingCart2>()}
+                {"private", () => container.GetAllInstances<IShoppingCart>().FirstOrDefault(instance => instance.GetType() == typeof(ShoppingCart))},
+                {"public", () => container.GetAllInstances<IShoppingCart>().FirstOrDefault(instance => instance.GetType() == typeof(ShoppingCart2))}
             });
 
             // Register all RepositoryDictionaries
-            container.RegisterAll<IRepositoryDict>();
+            container.Register<IRepositoryDict, RepositoryDictionary>();
 
             // Register a Dictionary Func
             container.Register<Func<Dictionary<Type, RepositoryBase>>>(() =>
